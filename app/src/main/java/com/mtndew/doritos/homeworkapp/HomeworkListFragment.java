@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
 import com.mtndew.doritos.homeworkapp.dummy.DummyContent;
 
 /**
