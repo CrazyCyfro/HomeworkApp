@@ -1,13 +1,17 @@
 package com.mtndew.doritos.homeworkapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.mtndew.doritos.homeworkapp.dummy.DummyContent;
+
+import java.util.ArrayList;
 
 /**
  * A list fragment representing a list of Homeworks. This fragment
@@ -147,5 +151,20 @@ public class HomeworkListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    @Override
+    private class HomeworkAdapter extends ArrayAdapter<Homework> {
+        private int mResource;
+        private ArrayList<Homework> mHomeworkArrayList;
+
+        public HomeworkAdapter(Context context, int resource, ArrayList<Homework> homeworkList) {
+            super(context, resource, homeworkList);
+            mResource = resource;
+            mHomeworkArrayList = homeworkList;
+        }
+
+        @Override
+        public View getView(int position, View row, ViewGroup parent)
     }
 }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.mtndew.doritos.homeworkapp.dummy.DummyContent;
+//import com.mtndew.doritos.homeworkapp.dummy.DummyContent;
 
 /**
  * A fragment representing a single Homework detail screen.
@@ -29,7 +29,7 @@ public class HomeworkDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    //private DummyContent.DummyItem mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,7 +49,7 @@ public class HomeworkDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            //mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
         }
     }
 
@@ -59,15 +59,12 @@ public class HomeworkDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_homework_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
+        /*if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.homework_detail)).setText(mItem.content);
-        }
+        }*/
 
         return rootView;
     }
 
-    @Override
-    private class HomeworkAdapter extends ArrayAdapter<Homework> {
-        private
-    }
+
 }
