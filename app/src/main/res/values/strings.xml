@@ -4,4 +4,7 @@
     <string name="app_name">HomeworkApp</string>
     <string name="title_homework_detail">Homework Detail</string>
 
+    <!--Homework List Strings-->
+    <string name="add_homework_button">+</string>
+
 </resources>
