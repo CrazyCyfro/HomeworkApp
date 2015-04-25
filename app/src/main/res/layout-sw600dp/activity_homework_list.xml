@@ -1,22 +1,50 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp" android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
-    android:showDividers="middle" tools:context=".HomeworkListActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    tools:context=".HomeworkListActivity">
 
     <!--
     This layout is a two-pane layout for the Homeworks
     master/detail flow.
     
     -->
+    <RelativeLayout
+        android:id="@+id/left_section"
+        android:layout_width="200dp"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/add_homework_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/add_homework_button"
+            android:textSize="20sp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            style="?android:attr/borderlessButtonStyle"/>
 
-    <fragment android:id="@+id/homework_list"
-        android:name="com.mtndew.doritos.homeworkapp.HomeworkListFragment"
-        android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-        tools:layout="@android:layout/list_content" />
+        <fragment
+            android:id="@+id/homework_list"
+            android:name="com.mtndew.doritos.homeworkapp.HomeworkListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_below="@+id/add_homework_button"
+            tools:layout="@android:layout/list_content" />
+    </RelativeLayout>
 
-    <FrameLayout android:id="@+id/homework_detail_container" android:layout_width="0dp"
-        android:layout_height="match_parent" android:layout_weight="3" />
+    <FrameLayout
+        android:id="@+id/homework_detail_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/left_section"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,153 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ToggleButton
-        android:id="@+id/done_button"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textOn="@string/homework_done"
-        android:textOff="@string/homework_not_done"/>
-
-    <Button
-        android:id="@+id/update_button"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/done_button"
-        android:layout_margin="16dp"
-        android:text="@string/update"/>
-
-    <TextView
-        android:id="@+id/details"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/done_button"
-        android:padding="16dp"
-        android:text="@string/details"
-        android:textSize="20sp"/>
+        android:layout_height="match_parent">
 
-    <!--Detail fields-->
-    <TableLayout
-        android:id="@+id/detail_fields"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/details"
-        android:stretchColumns="1">
+        <ToggleButton
+            android:id="@+id/done_button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textOn="@string/homework_done"
+            android:textOff="@string/homework_not_done"/>
 
-        <TableRow
-            android:padding="16dp">
+        <Button
+            android:id="@+id/update_button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/done_button"
+            android:layout_margin="16dp"
+            android:text="@string/update"/>
 
-            <TextView
-                android:id="@+id/name_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/name"
-                android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/done_button"
+            android:padding="16dp"
+            android:text="@string/details"
+            android:textSize="20sp"/>
 
-            <EditText
-                android:id="@+id/name_edittext"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginEnd="30dp"
-                android:inputType="text">
-            </EditText>
-        </TableRow>
+        <!--Detail fields-->
+        <TableLayout
+            android:id="@+id/detail_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/details"
+            android:stretchColumns="1">
 
-        <TableRow
-            android:padding="16dp">
+            <TableRow
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/subject_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/subject"
-                android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/name_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/name"
+                    android:textSize="18sp"/>
 
-            <Spinner
-                android:id="@+id/subject_spinner"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginEnd="30dp"
-                android:inputType="text">
-            </Spinner>
-        </TableRow>
+                <EditText
+                    android:id="@+id/name_edittext"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:inputType="text">
+                </EditText>
+            </TableRow>
 
-        <TableRow
-            android:padding="16dp">
+            <TableRow
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/due_date_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/due_date"
-                android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/subject_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/subject"
+                    android:textSize="18sp"/>
 
-            <Button
-                android:id="@+id/due_date_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginEnd="30dp" >
-            </Button>
-        </TableRow>
+                <Spinner
+                    android:id="@+id/subject_spinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:inputType="text">
+                </Spinner>
+            </TableRow>
 
-        <TableRow
-            android:padding="16dp">
+            <TableRow
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/reminder_date_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/remind_date"
-                android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/due_date_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/due_date"
+                    android:textSize="18sp"/>
 
-            <Button
-                android:id="@+id/reminder_date_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginEnd="30dp" >
-            </Button>
-        </TableRow>
+                <Button
+                    android:id="@+id/due_date_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp" >
+                </Button>
+            </TableRow>
 
-        <TableRow
-            android:padding="16dp">
+            <TableRow
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/notes_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/notes"
-                android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/reminder_date_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remind_date"
+                    android:textSize="18sp"/>
 
-            <EditText
-                android:id="@+id/notes_edittext"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginEnd="30dp"
-                android:inputType="textMultiLine"
-                android:lines="5">
-            </EditText>
-        </TableRow>
+                <Button
+                    android:id="@+id/reminder_date_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp" >
+                </Button>
+            </TableRow>
 
-    </TableLayout>
+            <TableRow
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/notes_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notes"
+                    android:textSize="18sp"/>
+
+                <EditText
+                    android:id="@+id/notes_edittext"
+                    android:layout_width="fill_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:inputType="textMultiLine"
+                    android:gravity="top">
+                </EditText>
+            </TableRow>
+
+        </TableLayout>
 
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

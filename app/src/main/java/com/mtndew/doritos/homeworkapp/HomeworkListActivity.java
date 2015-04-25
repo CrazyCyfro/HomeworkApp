@@ -3,6 +3,11 @@ package com.mtndew.doritos.homeworkapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+
+import java.util.GregorianCalendar;
+
 
 
 /**
@@ -30,10 +35,17 @@ public class HomeworkListActivity extends FragmentActivity
      */
     private boolean mTwoPane;
 
+    private Button mAddHomeworkButton;
+
+    private HomeworkListFragment mHLF;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_list);
+
+        mHLF = (HomeworkListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.homework_list);
 
         if (findViewById(R.id.homework_detail_container) != null) {
             // The detail container view will be present only in the
@@ -44,10 +56,18 @@ public class HomeworkListActivity extends FragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((HomeworkListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.homework_list))
-                    .setActivateOnItemClick(true);
+            mHLF.setActivateOnItemClick(true);
         }
+
+        mAddHomeworkButton = (Button)this.findViewById(R.id.add_homework_button);
+
+        mAddHomeworkButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                HomeworkContent.addItem(new HomeworkContent.Homework("New Homework","",false,new GregorianCalendar(),new GregorianCalendar(),"",1,HomeworkContent.currentId.toString()));
+
+                mHLF.getAdapter().notifyDataSetChanged();
+            }
+        });
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
