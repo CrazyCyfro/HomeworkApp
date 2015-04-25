@@ -7,4 +7,16 @@
     <!--Homework List Strings-->
     <string name="add_homework_button">+</string>
 
+    <!--Homework Detail Strings-->
+    <string name="homework_done">Completed</string>
+    <string name="homework_not_done">In progress</string>
+    <string name="details">DETAILS</string>
+    <string name="name">Name</string>
+    <string name="subject">Subject</string>
+    <string name="due_date">Due date</string>
+    <string name="remind_date">Reminder</string>
+    <string name="priority">Priority</string>
+    <string name="notes">Notes</string>
+    <string name="update">Update</string>
+
 </resources>

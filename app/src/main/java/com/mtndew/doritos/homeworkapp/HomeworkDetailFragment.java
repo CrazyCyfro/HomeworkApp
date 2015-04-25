@@ -56,7 +56,7 @@ public class HomeworkDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.homework_detail)).setText(mItem.getmName());
+            ((TextView) rootView.findViewById(R.id.name_edittext)).setText(mItem.getmName());
         }
 
         return rootView;

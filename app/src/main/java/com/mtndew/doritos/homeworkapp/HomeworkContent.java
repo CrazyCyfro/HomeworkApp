@@ -13,7 +13,7 @@ public class HomeworkContent {
     public static Integer currentId = 1;
 
     static {
-        addItem(new Homework("McAfee Internet Security", "Security", false, new GregorianCalendar(2015,6,30), new GregorianCalendar(2015,6,10),"",1,currentId.toString()));
+        addItem(new Homework("McAfee Internet Security", "Security", false, new GregorianCalendar(2015, 6,30), new GregorianCalendar(2015,6,10),"",1,currentId.toString()));
     }
 
     private static void addItem(Homework item) {
