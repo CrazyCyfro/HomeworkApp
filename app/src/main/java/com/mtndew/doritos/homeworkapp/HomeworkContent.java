@@ -8,17 +8,17 @@ import java.util.Map;
 
 public class HomeworkContent {
 
-    public static List<Homework> ITEMS = new ArrayList<Homework>();
-    public static Map<String, Homework> ITEM_MAP = new HashMap<>();
-    public static Integer currentId = 1;
+    public static List<Homework> HOMEWORKS = new ArrayList<Homework>();
+    public static Map<String, Homework> HOMEWORK_MAP = new HashMap<>();
+    public static Integer currentId = 0;
 
     static {
         addItem(new Homework("McAfee Internet Security", "Security", false, new GregorianCalendar(2015, 6,30), new GregorianCalendar(2015,6,10),"",1,currentId.toString()));
     }
 
     public static void addItem(Homework item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.mId, item);
+        HOMEWORKS.add(item);
+        HOMEWORK_MAP.put(item.mId, item);
         currentId += 1;
     }
 

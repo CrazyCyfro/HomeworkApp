@@ -9,13 +9,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
     private List<HomeworkContent.Homework> mHomeworkList;
     private Context context;
-    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat simpleDateFormat;
 
 
     public HomeworkAdapter(Context context, int resource, List<HomeworkContent.Homework> mHomeworkList) {
@@ -35,10 +37,10 @@ public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
         TextView homeworkName = (TextView)convertView.findViewById(R.id.homework_name);
         homeworkName.setText(mHomeworkList.get(position).getmName());
 
-        dateFormat = new SimpleDateFormat();
-        dateFormat.setCalendar(mHomeworkList.get(position).getmDueDate());
+        simpleDateFormat = new SimpleDateFormat();
+        simpleDateFormat.setCalendar(mHomeworkList.get(position).getmDueDate());
         TextView homeworkDate = (TextView)convertView.findViewById(R.id.homework_date);
-        homeworkDate.setText(dateFormat.getDateInstance().format(mHomeworkList.get(position).getmDueDate().getTime()));
+        homeworkDate.setText(simpleDateFormat.getDateInstance().format(mHomeworkList.get(position).getmDueDate().getTime()));
 
         ImageView homeworkIcon = (ImageView)convertView.findViewById(R.id.homework_icon);
         if (!mHomeworkList.get(position).getmDone()) {

@@ -70,7 +70,7 @@ public class HomeworkListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mHomeworkAdapter = new HomeworkAdapter(getActivity(), R.layout.activity_homework_item, HomeworkContent.ITEMS);
+        mHomeworkAdapter = new HomeworkAdapter(getActivity(), R.layout.activity_homework_item, HomeworkContent.HOMEWORKS);
         setListAdapter(mHomeworkAdapter);
 
     }
@@ -119,7 +119,7 @@ public class HomeworkListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(HomeworkContent.ITEMS.get(position).mId);
+        mCallbacks.onItemSelected(HomeworkContent.HOMEWORKS.get(position).mId);
     }
 
     @Override
