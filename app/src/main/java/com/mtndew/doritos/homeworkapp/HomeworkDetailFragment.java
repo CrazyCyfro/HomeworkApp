@@ -1,16 +1,23 @@
 package com.mtndew.doritos.homeworkapp;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 
@@ -39,7 +46,6 @@ public class HomeworkDetailFragment extends Fragment {
     private Button mRemindDateDateButton;
     private Button mRemindDateTimeButton;
     private EditText mNotesEditText;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -72,19 +78,21 @@ public class HomeworkDetailFragment extends Fragment {
             mRemindDateTimeButton = (Button)rootView.findViewById(R.id.reminder_date_time_button);
             mNotesEditText = (EditText)rootView.findViewById(R.id.notes_edittext);
 
+            //Display all the fields for the homework
             mHomeworkNameEditText.setText(mHomework.getmName());
             mSubjectEditText.setText(mHomework.getmSubject());
-            mDueDateDateButton.setText(String.valueOf(mHomework.getmDueDate().get(Calendar.DATE)) + "/" + String.valueOf(mHomework.getmDueDate().get(Calendar.MONTH))+"/"+String.valueOf(mHomework.getmDueDate().get(Calendar.YEAR)));
-            mDueDateTimeButton.setText(String.valueOf(mHomework.getmDueDate().get(Calendar.HOUR_OF_DAY))+":"+String.valueOf(mHomework.getmDueDate().get(Calendar.MINUTE)));
-            mRemindDateDateButton.setText(String.valueOf(mHomework.getmRemindDate().get(Calendar.DATE)) + "/" + String.valueOf(mHomework.getmRemindDate().get(Calendar.MONTH))+"/"+String.valueOf(mHomework.getmRemindDate().get(Calendar.YEAR)));
-            mRemindDateTimeButton.setText(String.valueOf(mHomework.getmRemindDate().get(Calendar.HOUR_OF_DAY))+":"+String.valueOf(mHomework.getmRemindDate().get(Calendar.MINUTE)));
+            mDueDateDateButton.setText(formatDate(mHomework.getmDueDate()));
+            mDueDateTimeButton.setText(formatTime(mHomework.getmDueDate()));
+            mRemindDateDateButton.setText(formatDate(mHomework.getmRemindDate()));
+            mRemindDateTimeButton.setText(formatTime(mHomework.getmRemindDate()));
             mNotesEditText.setText(mHomework.getmNotes());
         }
 
         final DatePickerDialog dueDateDatePickerDialog = new DatePickerDialog(getActivity(), DatePickerDialog.THEME_HOLO_LIGHT, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                HomeworkContent.HOMEWORKS.get(Integer.valueOf(getArguments().getString(ARG_ITEM_ID))).getmDueDate().set(year,monthOfYear,dayOfMonth);
+                mHomework.getmDueDate().set(year,monthOfYear,dayOfMonth);
+                mDueDateDateButton.setText(formatDate(mHomework.getmDueDate()));
             }
         },mHomework.getmDueDate().get(Calendar.YEAR),mHomework.getmDueDate().get(Calendar.MONTH),mHomework.getmDueDate().get(Calendar.DAY_OF_MONTH));
 
@@ -94,9 +102,35 @@ public class HomeworkDetailFragment extends Fragment {
             }
         });
 
+        final TimePickerDialog dueDateTimePickerDialog = new TimePickerDialog(getActivity(), DatePickerDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mHomework.getmDueDate().set(Calendar.HOUR_OF_DAY,hourOfDay);
+                mHomework.getmDueDate().set(Calendar.MINUTE,minute);
+                mDueDateTimeButton.setText(formatTime(mHomework.getmDueDate()));
+            }
+        },mHomework.getmDueDate().get(Calendar.HOUR_OF_DAY),mHomework.getmDueDate().get(Calendar.MINUTE),false);
+
+        mDueDateTimeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dueDateTimePickerDialog.show();
+            }
+        });
 
         return rootView;
     }
 
+    public static String formatDate(GregorianCalendar calendar) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        simpleDateFormat.setCalendar(calendar);
+        String formattedDate = simpleDateFormat.getDateInstance().format(calendar.getTime());
+        return formattedDate;
+    }
+
+    public String formatTime(GregorianCalendar calendar) {
+        DateFormat dateFormat = new DateFormat();
+        String formattedTime = dateFormat.getTimeFormat(getActivity()).format(calendar.getTime());
+        return formattedTime;
+    }
 
 }
