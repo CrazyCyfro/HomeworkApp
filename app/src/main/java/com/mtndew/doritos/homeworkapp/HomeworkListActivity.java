@@ -39,6 +39,8 @@ public class HomeworkListActivity extends FragmentActivity
 
     private HomeworkListFragment mHLF;
 
+    public static final int EDIT_HOMEWORK_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +97,7 @@ public class HomeworkListActivity extends FragmentActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, HomeworkDetailActivity.class);
             detailIntent.putExtra(HomeworkDetailFragment.ARG_ITEM_ID, id);
-            startActivity(detailIntent);
+            startActivityForResult(detailIntent, EDIT_HOMEWORK_REQUEST);
         }
     }
 }
