@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="high_priority">#FD7400</color>
+    <color name="med_priority">#FFE11A</color>
+    <color name="low_priority">#1F8A70</color>
+    <color name="done">#BEDB39</color>
+    <color name="overdue">#FF2D00</color>
+    <color name="delete">#D90000</color>
+</resources>

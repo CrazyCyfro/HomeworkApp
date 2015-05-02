@@ -6,8 +6,10 @@
 
     <!--Homework List Strings-->
     <string name="add_homework_button">+</string>
+    <string name="sort_by">Sort by</string>
 
     <!--Homework Detail Strings-->
+    <string name="export">Export</string>
     <string name="homework_done">Completed</string>
     <string name="homework_not_done">In progress</string>
     <string name="details">DETAILS</string>
@@ -21,9 +23,15 @@
     <string name="high_priority">High</string>
     <string name="notes">Notes</string>
     <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+    <!--AlarmReceiver Strings-->
+    <string name="notification_title">Homework App</string>
+    <string name="notification_message">Homework reminder/due!</string>
 
     <!--HomeworkDetailFragment Strings-->
-    <string name="notification_message">Homework reminder!</string>
+    <string name="export_to">Export to</string>
+    <string name="confirm_delete">Confirm delete?</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -1,5 +1,6 @@
 package com.mtndew.doritos.homeworkapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,7 +8,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +21,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 
 import com.google.gson.Gson;
@@ -52,6 +58,7 @@ public class HomeworkListActivity extends FragmentActivity
     private boolean mTwoPane;
 
     private Button mAddHomeworkButton;
+    private Spinner mSortSpinner;
 
     private HomeworkListFragment mHLF;
 
@@ -60,7 +67,6 @@ public class HomeworkListActivity extends FragmentActivity
 
     private String SAVED_HOMEWORKS = "saved homeworks";
 
-    private String tag = "debug";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +79,6 @@ public class HomeworkListActivity extends FragmentActivity
         try {
             FileInputStream fis = openFileInput(SAVED_HOMEWORKS);
             ObjectInputStream is = new ObjectInputStream(fis);
-            Log.d(tag, "extracting file");
             ArrayList<HomeworkContent.Homework> savedHomeworks = (ArrayList< HomeworkContent.Homework>)is.readObject();
             if (savedHomeworks.size() == 0) {
                 HomeworkContent.addItem(new HomeworkContent.Homework("Homework 3", "CEP", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
@@ -97,7 +102,6 @@ public class HomeworkListActivity extends FragmentActivity
             c.printStackTrace();
         }
 
-
         if (findViewById(R.id.homework_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
@@ -111,13 +115,46 @@ public class HomeworkListActivity extends FragmentActivity
         }
 
         mAddHomeworkButton = (Button)this.findViewById(R.id.add_homework_button);
+        mSortSpinner = (Spinner)this.findViewById(R.id.sort_spinner);
 
         mAddHomeworkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.d(tag,"new homework addedddddd");
                 HomeworkContent.addItem(new HomeworkContent.Homework("New Homework","",false,new GregorianCalendar(),new GregorianCalendar(),"",1,HomeworkContent.currentId.toString()));
 
                 updateAdapter();
+            }
+        });
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.category_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSortSpinner.setAdapter(spinnerAdapter);
+
+        mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (parent.getItemAtPosition(position).equals("Due date")) {
+                    Collections.sort(HomeworkContent.HOMEWORKS, new DateComparator());
+
+                } else if (parent.getItemAtPosition(position).equals("Name")) {
+                    Collections.sort(HomeworkContent.HOMEWORKS, new Comparator<HomeworkContent.Homework>() {
+                        public int compare(HomeworkContent.Homework hw1, HomeworkContent.Homework hw2) {
+                            return hw1.getmName().compareToIgnoreCase(hw2.getmName());
+                        }
+                    });
+                } else if (parent.getItemAtPosition(position).equals("Priority")) {
+                    Collections.sort(HomeworkContent.HOMEWORKS, new Comparator<HomeworkContent.Homework>() {
+                        public int compare(HomeworkContent.Homework hw1, HomeworkContent.Homework hw2) {
+                            return hw2.getmPriority().compareTo(hw1.getmPriority());
+                        }
+                    });
+                }
+                updateAdapter();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -166,7 +203,6 @@ public class HomeworkListActivity extends FragmentActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(tag,"Stopping");
 
         try {
             FileOutputStream fos = openFileOutput(SAVED_HOMEWORKS, Context.MODE_PRIVATE);
@@ -182,7 +218,6 @@ public class HomeworkListActivity extends FragmentActivity
 
 
     public void updateAdapter() {
-        Log.d(tag, "refreshing adapter");
         mHLF.getAdapter().notifyDataSetChanged();
     }
 }

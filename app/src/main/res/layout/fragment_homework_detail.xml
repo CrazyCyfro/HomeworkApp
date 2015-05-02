@@ -8,12 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/export_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/export"/>
+
         <ToggleButton
             android:id="@+id/done_button"
-            android:layout_width="200dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            android:layout_toRightOf="@+id/export_button"
+            android:layout_toEndOf="@+id/export_button"
             android:textOn="@string/homework_done"
             android:textOff="@string/homework_not_done"/>
         <Button
@@ -233,6 +241,16 @@
             </TableRow>
 
         </TableLayout>
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/detail_fields"
+            android:text="@string/delete"
+            android:background="@color/delete"/>
 
 
 

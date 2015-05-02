@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,6 +48,20 @@ public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
             homeworkIcon.setVisibility(View.VISIBLE);
         } else {
             homeworkIcon.setVisibility(View.INVISIBLE);
+        }
+
+        if (mHomeworkList.get(position).getmDone()) {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.done));
+        } else if (mHomeworkList.get(position).getmDueDate().compareTo(new GregorianCalendar()) == -1){
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.overdue));
+        } else {
+            if (mHomeworkList.get(position).getmPriority() == 1) {
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.low_priority));
+            } else if (mHomeworkList.get(position).getmPriority() == 2) {
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.med_priority));
+            } else {
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.high_priority));
+            }
         }
 
         return convertView;

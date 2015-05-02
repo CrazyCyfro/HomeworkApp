@@ -1,14 +1,20 @@
 package com.mtndew.doritos.homeworkapp;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
@@ -26,6 +32,7 @@ import android.widget.ToggleButton;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 
 /**
@@ -45,6 +52,8 @@ public class HomeworkDetailFragment extends Fragment {
     private HomeworkContent.Homework mHomework;
 
     private ToggleButton mDoneButton;
+    private Button mDeleteButton;
+    private Button mExportButton;
     private Button mSaveButton;
     private EditText mHomeworkNameEditText;
     private EditText mSubjectEditText;
@@ -57,6 +66,8 @@ public class HomeworkDetailFragment extends Fragment {
 
     private GregorianCalendar mTempDueDate;
     private GregorianCalendar mTempRemindDate;
+
+    private AlertDialog mAlertDialog;
 
     private HomeworkListFragment mHLF;
 
@@ -88,7 +99,9 @@ public class HomeworkDetailFragment extends Fragment {
 
 
         if (mHomework != null) {
+            mDeleteButton = (Button)rootView.findViewById(R.id.delete_button);
             mDoneButton = (ToggleButton)rootView.findViewById(R.id.done_button);
+            mExportButton = (Button)rootView.findViewById(R.id.export_button);
             mSaveButton = (Button)rootView.findViewById(R.id.save_button);
             mHomeworkNameEditText = (EditText)rootView.findViewById(R.id.name_edittext);
             mSubjectEditText = (EditText)rootView.findViewById(R.id.subject_edittext);
@@ -198,6 +211,25 @@ public class HomeworkDetailFragment extends Fragment {
             }
         });
 
+
+
+        mExportButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent implicitIntent = new Intent(Intent.ACTION_SEND);
+                implicitIntent.setType("text/plain");
+                implicitIntent.putExtra(Intent.EXTRA_TEXT, formatHomework(mHomework));
+                startActivity(Intent.createChooser(implicitIntent,getText(R.string.export_to)));
+            }
+        });
+
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mAlertDialog = deleteHomeworkDialog();
+                mAlertDialog.show();
+            }
+        });
+
+
         return rootView;
     }
 
@@ -214,6 +246,21 @@ public class HomeworkDetailFragment extends Fragment {
         return formattedTime;
     }
 
+    //return homework as text
+    public String formatHomework(HomeworkContent.Homework homework) {
+        return  homework.getmName()
+                +"\nSubject: "
+                +homework.getmSubject()
+                +"\nDue date: "
+                +formatDate(homework.getmDueDate())+" "
+                +formatTime(homework.getmDueDate())
+                +"\nReminder: "
+                +formatDate(homework.getmRemindDate())+" "
+                +formatTime(homework.getmRemindDate())
+                +"\nNotes: "
+                +homework.getmNotes();
+    }
+
     public void saveHomework() {
         mHomework.setmName(mHomeworkNameEditText.getText().toString());
         mHomework.setmSubject(mSubjectEditText.getText().toString());
@@ -222,7 +269,9 @@ public class HomeworkDetailFragment extends Fragment {
         mHomework.setmRemindDate(mTempRemindDate);
         mHomework.setmNotes(mNotesEditText.getText().toString());
 
-        if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.low_priority_button) {
+        if (mHomework.getmDone()) {
+            mHomework.setmPriority(0);
+        } else if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.low_priority_button) {
             mHomework.setmPriority(1);
         } else if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.med_priority_button) {
             mHomework.setmPriority(2);
@@ -233,9 +282,35 @@ public class HomeworkDetailFragment extends Fragment {
         //thanks Navneeth, you are a life saver
         AlarmManager alarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,alarmIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),alarmIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),pendingIntent);
+        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),pendingIntent);
 
+        updateHomeworkList();
+    }
+
+    private AlertDialog deleteHomeworkDialog() {
+        return new AlertDialog.Builder(getActivity())
+                .setTitle(getText(R.string.delete)+" "+mHomework.getmName())
+                .setMessage(getText(R.string.confirm_delete))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HomeworkContent.HOMEWORKS.remove(mHomework);
+                                updateHomeworkList();
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .create();
+    }
+
+    public void updateHomeworkList() {
         if(mTwoPane == null) {
             HomeworkDetailActivity mHDA = (HomeworkDetailActivity) getActivity();
             mHDA.navigateUp();

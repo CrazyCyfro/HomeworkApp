@@ -14,12 +14,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.warning_icon)
-                        .setContentTitle(R.string.notification_message)
-                        .setContentText("");
+                        .setContentTitle(context.getString(R.string.notification_title))
+                        .setContentText(context.getString(R.string.notification_message));
         Intent resultIntent = new Intent(context, HomeworkListActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(HomeworkListActivity.class);
@@ -33,6 +32,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationManager mNotificationManager =
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1,mBuilder.build());
+        mNotificationManager.notify(0,mBuilder.build());
     }
 }
