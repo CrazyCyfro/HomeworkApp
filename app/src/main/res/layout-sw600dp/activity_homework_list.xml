@@ -19,7 +19,7 @@
     -->
     <RelativeLayout
         android:id="@+id/left_section"
-        android:layout_width="200dp"
+        android:layout_width="400dp"
         android:layout_height="match_parent">
         <Button
             android:id="@+id/add_homework_button"

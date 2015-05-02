@@ -1,28 +1,28 @@
 package com.mtndew.doritos.homeworkapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomeworkContent {
+public class HomeworkContent implements Serializable {
 
-    public static List<Homework> HOMEWORKS = new ArrayList<Homework>();
+    public static List<Homework> HOMEWORKS = new ArrayList<>();
     public static Map<String, Homework> HOMEWORK_MAP = new HashMap<>();
     public static Integer currentId = 0;
 
     static {
-        addItem(new Homework("McAfee Internet Security", "Security", false, new GregorianCalendar(2015, 6,30), new GregorianCalendar(2015,6,10),"",1,currentId.toString()));
     }
 
     public static void addItem(Homework item) {
         HOMEWORKS.add(item);
         HOMEWORK_MAP.put(item.mId, item);
-        currentId += 1;
+        currentId ++;
     }
 
-    public static class Homework {
+    public static class Homework implements Serializable {
         public String mName;
         public String mSubject;
         public Boolean mDone;

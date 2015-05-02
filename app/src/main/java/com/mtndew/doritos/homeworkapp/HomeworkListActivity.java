@@ -1,13 +1,29 @@
 package com.mtndew.doritos.homeworkapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 
 /**
@@ -39,7 +55,12 @@ public class HomeworkListActivity extends FragmentActivity
 
     private HomeworkListFragment mHLF;
 
-    public static final int EDIT_HOMEWORK_REQUEST = 1;
+
+    public static final int HOMEWORK_REQUEST = 1;
+
+    private String SAVED_HOMEWORKS = "saved homeworks";
+
+    private String tag = "debug";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +69,34 @@ public class HomeworkListActivity extends FragmentActivity
 
         mHLF = (HomeworkListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.homework_list);
+
+        try {
+            FileInputStream fis = openFileInput(SAVED_HOMEWORKS);
+            ObjectInputStream is = new ObjectInputStream(fis);
+            Log.d(tag, "extracting file");
+            ArrayList<HomeworkContent.Homework> savedHomeworks = (ArrayList< HomeworkContent.Homework>)is.readObject();
+            if (savedHomeworks.size() == 0) {
+                HomeworkContent.addItem(new HomeworkContent.Homework("Homework 3", "CEP", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
+                HomeworkContent.addItem(new HomeworkContent.Homework("Topkek", "Memes", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
+                HomeworkContent.addItem(new HomeworkContent.Homework("Ganja","Dank",false,new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
+            } else if (HomeworkContent.HOMEWORKS.size() == 0){
+                for (HomeworkContent.Homework tempHomework : savedHomeworks) {
+                    HomeworkContent.addItem(tempHomework);
+                }
+            }
+
+            is.close();
+            updateAdapter();
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (StreamCorruptedException sc) {
+            sc.printStackTrace();
+        } catch (IOException io) {
+            io.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+        }
+
 
         if (findViewById(R.id.homework_detail_container) != null) {
             // The detail container view will be present only in the
@@ -65,13 +114,24 @@ public class HomeworkListActivity extends FragmentActivity
 
         mAddHomeworkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Log.d(tag,"new homework addedddddd");
                 HomeworkContent.addItem(new HomeworkContent.Homework("New Homework","",false,new GregorianCalendar(),new GregorianCalendar(),"",1,HomeworkContent.currentId.toString()));
 
-                mHLF.getAdapter().notifyDataSetChanged();
+                updateAdapter();
             }
         });
 
+
         // TODO: If exposing deep links into your app, handle intents here.
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == HOMEWORK_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                updateAdapter();
+            }
+        }
     }
 
     /**
@@ -86,6 +146,7 @@ public class HomeworkListActivity extends FragmentActivity
             // fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putString(HomeworkDetailFragment.ARG_ITEM_ID, id);
+            arguments.putBoolean(HomeworkDetailFragment.IS_TWOPANE, true);
             HomeworkDetailFragment fragment = new HomeworkDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -97,7 +158,31 @@ public class HomeworkListActivity extends FragmentActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, HomeworkDetailActivity.class);
             detailIntent.putExtra(HomeworkDetailFragment.ARG_ITEM_ID, id);
-            startActivityForResult(detailIntent, EDIT_HOMEWORK_REQUEST);
+            startActivityForResult(detailIntent, HOMEWORK_REQUEST);
         }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(tag,"Stopping");
+
+        try {
+            FileOutputStream fos = openFileOutput(SAVED_HOMEWORKS, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(HomeworkContent.HOMEWORKS);
+            oos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException io) {
+            io.printStackTrace();
+        }
+    }
+
+
+    public void updateAdapter() {
+        Log.d(tag, "refreshing adapter");
+        mHLF.getAdapter().notifyDataSetChanged();
     }
 }

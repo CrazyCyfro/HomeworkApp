@@ -65,4 +65,11 @@ public class HomeworkDetailActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void navigateUp() {
+        NavUtils.navigateUpTo(this, new Intent(this, HomeworkListActivity.class));
+        Intent navigateUpIntent = new Intent();
+        setResult(RESULT_OK,navigateUpIntent);
+        finish();
+    }
 }

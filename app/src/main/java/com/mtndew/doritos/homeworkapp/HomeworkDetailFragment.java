@@ -1,10 +1,16 @@
 package com.mtndew.doritos.homeworkapp;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 
@@ -34,6 +40,7 @@ public class HomeworkDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String IS_TWOPANE = "is two pane";
 
     private HomeworkContent.Homework mHomework;
 
@@ -45,10 +52,15 @@ public class HomeworkDetailFragment extends Fragment {
     private Button mDueDateTimeButton;
     private Button mRemindDateDateButton;
     private Button mRemindDateTimeButton;
+    private RadioGroup mPriorityRadioGroup;
     private EditText mNotesEditText;
 
     private GregorianCalendar mTempDueDate;
     private GregorianCalendar mTempRemindDate;
+
+    private HomeworkListFragment mHLF;
+
+    private Boolean mTwoPane;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -62,14 +74,18 @@ public class HomeworkDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-
             mHomework = HomeworkContent.HOMEWORK_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        }
+
+        if (getArguments().containsKey(IS_TWOPANE)) {
+            mTwoPane = getArguments().getBoolean(IS_TWOPANE);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_homework_detail, container, false);
+
 
         if (mHomework != null) {
             mDoneButton = (ToggleButton)rootView.findViewById(R.id.done_button);
@@ -80,6 +96,7 @@ public class HomeworkDetailFragment extends Fragment {
             mDueDateTimeButton = (Button)rootView.findViewById(R.id.due_date_time_button);
             mRemindDateDateButton = (Button)rootView.findViewById(R.id.reminder_date_date_button);
             mRemindDateTimeButton = (Button)rootView.findViewById(R.id.reminder_date_time_button);
+            mPriorityRadioGroup = (RadioGroup)rootView.findViewById(R.id.priority_radiogroup);
             mNotesEditText = (EditText)rootView.findViewById(R.id.notes_edittext);
 
             mTempDueDate = new GregorianCalendar(mHomework.getmDueDate().get(Calendar.YEAR),
@@ -95,12 +112,18 @@ public class HomeworkDetailFragment extends Fragment {
                                                     mHomework.getmRemindDate().get(Calendar.MINUTE));
 
             //Display all the fields for the homework
+            mDoneButton.setChecked(mHomework.getmDone());
             mHomeworkNameEditText.setText(mHomework.getmName());
             mSubjectEditText.setText(mHomework.getmSubject());
             mDueDateDateButton.setText(formatDate(mHomework.getmDueDate()));
             mDueDateTimeButton.setText(formatTime(mHomework.getmDueDate()));
             mRemindDateDateButton.setText(formatDate(mHomework.getmRemindDate()));
             mRemindDateTimeButton.setText(formatTime(mHomework.getmRemindDate()));
+            if (mHomework.getmPriority() == 2) {
+                mPriorityRadioGroup.check(R.id.med_priority_button);
+            } else if (mHomework.getmPriority() == 3) {
+                mPriorityRadioGroup.check(R.id.high_priority_button);
+            }
             mNotesEditText.setText(mHomework.getmNotes());
         }
 
@@ -171,7 +194,7 @@ public class HomeworkDetailFragment extends Fragment {
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                saveHomework();
             }
         });
 
@@ -197,8 +220,29 @@ public class HomeworkDetailFragment extends Fragment {
         mHomework.setmDone(mDoneButton.isChecked());
         mHomework.setmDueDate(mTempDueDate);
         mHomework.setmRemindDate(mTempRemindDate);
-
         mHomework.setmNotes(mNotesEditText.getText().toString());
+
+        if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.low_priority_button) {
+            mHomework.setmPriority(1);
+        } else if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.med_priority_button) {
+            mHomework.setmPriority(2);
+        } else {
+            mHomework.setmPriority(3);
+        }
+
+        //thanks Navneeth, you are a life saver
+        AlarmManager alarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,alarmIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),pendingIntent);
+
+        if(mTwoPane == null) {
+            HomeworkDetailActivity mHDA = (HomeworkDetailActivity) getActivity();
+            mHDA.navigateUp();
+        } else if (mTwoPane) {
+            HomeworkListActivity mHLA = (HomeworkListActivity) getActivity();
+            mHLA.updateAdapter();
+        }
     }
 
 }
