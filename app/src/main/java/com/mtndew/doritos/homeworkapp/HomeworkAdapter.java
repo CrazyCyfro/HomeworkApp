@@ -15,6 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+
 public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
     private List<HomeworkContent.Homework> mHomeworkList;
     private Context context;
@@ -38,11 +39,13 @@ public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
         TextView homeworkName = (TextView)convertView.findViewById(R.id.homework_name);
         homeworkName.setText(mHomeworkList.get(position).getmName());
 
+        //formats due date in the list
         simpleDateFormat = new SimpleDateFormat();
         simpleDateFormat.setCalendar(mHomeworkList.get(position).getmDueDate());
         TextView homeworkDate = (TextView)convertView.findViewById(R.id.homework_date);
         homeworkDate.setText(simpleDateFormat.getDateInstance().format(mHomeworkList.get(position).getmDueDate().getTime()));
 
+        //displays an icon if homework is not done
         ImageView homeworkIcon = (ImageView)convertView.findViewById(R.id.homework_icon);
         if (!mHomeworkList.get(position).getmDone()) {
             homeworkIcon.setVisibility(View.VISIBLE);
@@ -50,6 +53,7 @@ public class HomeworkAdapter extends ArrayAdapter<HomeworkContent.Homework> {
             homeworkIcon.setVisibility(View.INVISIBLE);
         }
 
+        //colour codes the homework according to whether it's overdue, done, and it's priority
         if (mHomeworkList.get(position).getmDone()) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.done));
         } else if (mHomeworkList.get(position).getmDueDate().compareTo(new GregorianCalendar()) == -1){

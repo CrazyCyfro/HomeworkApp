@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//custom homework with additional fields (priority and notes)
 public class HomeworkContent implements Serializable {
 
     public static List<Homework> HOMEWORKS = new ArrayList<>();

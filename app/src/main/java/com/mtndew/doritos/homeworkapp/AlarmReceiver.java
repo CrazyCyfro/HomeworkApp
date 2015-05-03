@@ -1,6 +1,5 @@
 package com.mtndew.doritos.homeworkapp;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -9,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+//custom alarm receiver to build notifications
 public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
@@ -18,7 +18,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.warning_icon)
                         .setContentTitle(context.getString(R.string.notification_title))
-                        .setContentText(context.getString(R.string.notification_message));
+                        //get notif message from intent
+                        .setContentText(intent.getStringExtra(HomeworkDetailFragment.NOTIF_MESSAGE));
         Intent resultIntent = new Intent(context, HomeworkListActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(HomeworkListActivity.class);

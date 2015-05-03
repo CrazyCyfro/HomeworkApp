@@ -3,20 +3,13 @@ package com.mtndew.doritos.homeworkapp;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +25,6 @@ import android.widget.ToggleButton;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 
 /**
@@ -48,6 +40,8 @@ public class HomeworkDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
     public static final String IS_TWOPANE = "is two pane";
+
+    public static final String NOTIF_MESSAGE = "notification message";
 
     private HomeworkContent.Homework mHomework;
 
@@ -112,6 +106,7 @@ public class HomeworkDetailFragment extends Fragment {
             mPriorityRadioGroup = (RadioGroup)rootView.findViewById(R.id.priority_radiogroup);
             mNotesEditText = (EditText)rootView.findViewById(R.id.notes_edittext);
 
+            //temporary calendars to store date selected by date/time pickers
             mTempDueDate = new GregorianCalendar(mHomework.getmDueDate().get(Calendar.YEAR),
                                                  mHomework.getmDueDate().get(Calendar.MONTH),
                                                  mHomework.getmDueDate().get(Calendar.DAY_OF_MONTH),
@@ -132,11 +127,13 @@ public class HomeworkDetailFragment extends Fragment {
             mDueDateTimeButton.setText(formatTime(mHomework.getmDueDate()));
             mRemindDateDateButton.setText(formatDate(mHomework.getmRemindDate()));
             mRemindDateTimeButton.setText(formatTime(mHomework.getmRemindDate()));
+
             if (mHomework.getmPriority() == 2) {
                 mPriorityRadioGroup.check(R.id.med_priority_button);
             } else if (mHomework.getmPriority() == 3) {
                 mPriorityRadioGroup.check(R.id.high_priority_button);
             }
+
             mNotesEditText.setText(mHomework.getmNotes());
         }
 
@@ -212,7 +209,7 @@ public class HomeworkDetailFragment extends Fragment {
         });
 
 
-
+        //exports homework as text
         mExportButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent implicitIntent = new Intent(Intent.ACTION_SEND);
@@ -222,6 +219,7 @@ public class HomeworkDetailFragment extends Fragment {
             }
         });
 
+        //shows an alertdialog if the user wishes to delete homework
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mAlertDialog = deleteHomeworkDialog();
@@ -233,6 +231,7 @@ public class HomeworkDetailFragment extends Fragment {
         return rootView;
     }
 
+    //formats date/time to be shown in the date/time buttons
     public static String formatDate(GregorianCalendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
         simpleDateFormat.setCalendar(calendar);
@@ -270,6 +269,8 @@ public class HomeworkDetailFragment extends Fragment {
         mHomework.setmNotes(mNotesEditText.getText().toString());
 
         if (mHomework.getmDone()) {
+            //if homework is done,
+            //priority is set as 0 (although user still sees it as 1) for sorting and colour code purposes
             mHomework.setmPriority(0);
         } else if (mPriorityRadioGroup.getCheckedRadioButtonId() == R.id.low_priority_button) {
             mHomework.setmPriority(1);
@@ -279,12 +280,9 @@ public class HomeworkDetailFragment extends Fragment {
             mHomework.setmPriority(3);
         }
 
-        //thanks Navneeth, you are a life saver
-        AlarmManager alarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),alarmIntent,PendingIntent.FLAG_CANCEL_CURRENT);
-        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),pendingIntent);
-        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),pendingIntent);
+        if (!mHomework.getmDone()) {
+            remind();
+        }
 
         updateHomeworkList();
     }
@@ -297,6 +295,11 @@ public class HomeworkDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 HomeworkContent.HOMEWORKS.remove(mHomework);
+                                if (mTwoPane) {
+                                    getFragmentManager().beginTransaction()
+                                            .remove(getFragmentManager()
+                                                    .findFragmentById(R.id.homework_detail_container)).commit();
+                                }
                                 updateHomeworkList();
                             }
                         })
@@ -310,7 +313,10 @@ public class HomeworkDetailFragment extends Fragment {
                 .create();
     }
 
+    //updates the adapter of the list of homeworks
     public void updateHomeworkList() {
+        //getActivity() is different depending on whether it is twoPane or not,
+        //hence, different functions are called, but both aim to just call notifyDataSetChanged
         if(mTwoPane == null) {
             HomeworkDetailActivity mHDA = (HomeworkDetailActivity) getActivity();
             mHDA.navigateUp();
@@ -318,6 +324,24 @@ public class HomeworkDetailFragment extends Fragment {
             HomeworkListActivity mHLA = (HomeworkListActivity) getActivity();
             mHLA.updateAdapter();
         }
+    }
+
+    //sends the notification for both reminder and due date notifs
+    public void remind() {
+        //thanks Navneeth, you are a life saver
+        AlarmManager alarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent dueDateIntent = new Intent(getActivity(), AlarmReceiver.class);
+        dueDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" is due!");
+
+        Intent remindDateIntent = new Intent(getActivity(), AlarmReceiver.class);
+        remindDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" reminder!");
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),pendingIntent);
+        pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),remindDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),pendingIntent);
+
     }
 
 }

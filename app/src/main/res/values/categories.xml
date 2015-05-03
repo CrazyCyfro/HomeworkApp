@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Categories available to be sorted-->
     <string-array name="category_array">
         <item>Name</item>
         <item>Due date</item>

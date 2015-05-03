@@ -66,6 +66,7 @@ public class HomeworkDetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //called by homeworkdetailfragment to navigate back to homework list on a phone after save button is clicked
     public void navigateUp() {
         NavUtils.navigateUpTo(this, new Intent(this, HomeworkListActivity.class));
         Intent navigateUpIntent = new Intent();

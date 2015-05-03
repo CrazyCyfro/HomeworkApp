@@ -1,12 +1,9 @@
 package com.mtndew.doritos.homeworkapp;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,13 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.List;
-
 
 /**
  * An activity representing a list of Homeworks. This activity
@@ -62,10 +52,12 @@ public class HomeworkListActivity extends FragmentActivity
 
     private HomeworkListFragment mHLF;
 
+    //check if any data has been saved before
+    private Boolean savedBefore = false;
 
     public static final int HOMEWORK_REQUEST = 1;
 
-    private String SAVED_HOMEWORKS = "saved homeworks";
+    public static final String SAVED_HOMEWORKS = "saved homeworks";
 
 
     @Override
@@ -73,20 +65,32 @@ public class HomeworkListActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_list);
 
+        //finds homeworklistfragment
         mHLF = (HomeworkListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.homework_list);
 
         try {
             FileInputStream fis = openFileInput(SAVED_HOMEWORKS);
             ObjectInputStream is = new ObjectInputStream(fis);
-            ArrayList<HomeworkContent.Homework> savedHomeworks = (ArrayList< HomeworkContent.Homework>)is.readObject();
-            if (savedHomeworks.size() == 0) {
+            //savedBefore will be false if opening for the first time,
+            //true if saves have been added before
+            savedBefore = is.readBoolean();
+
+
+            //check if there have been any saves beforehand (
+            if (!savedBefore) {
+                //add data if it's the first time opening the app
                 HomeworkContent.addItem(new HomeworkContent.Homework("Homework 3", "CEP", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
                 HomeworkContent.addItem(new HomeworkContent.Homework("Topkek", "Memes", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
                 HomeworkContent.addItem(new HomeworkContent.Homework("Ganja","Dank",false,new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
-            } else if (HomeworkContent.HOMEWORKS.size() == 0){
-                for (HomeworkContent.Homework tempHomework : savedHomeworks) {
-                    HomeworkContent.addItem(tempHomework);
+            } else {
+                //load homeworks and add them to homeworkcontent
+                ArrayList<HomeworkContent.Homework> savedHomeworks = (ArrayList< HomeworkContent.Homework>)is.readObject();
+                if (HomeworkContent.HOMEWORKS.size() == 0) {
+
+                    for (HomeworkContent.Homework tempHomework : savedHomeworks) {
+                        HomeworkContent.addItem(tempHomework);
+                    }
                 }
             }
 
@@ -119,17 +123,20 @@ public class HomeworkListActivity extends FragmentActivity
 
         mAddHomeworkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //adds a new homework item directly to the list for user to edit
                 HomeworkContent.addItem(new HomeworkContent.Homework("New Homework","",false,new GregorianCalendar(),new GregorianCalendar(),"",1,HomeworkContent.currentId.toString()));
 
                 updateAdapter();
             }
         });
 
+        //sets up the sorting spinner with items from categories.xml
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.category_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSortSpinner.setAdapter(spinnerAdapter);
 
+        //sorts accordingly when item is selected
         mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -158,10 +165,9 @@ public class HomeworkListActivity extends FragmentActivity
             }
         });
 
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
+    //only called when on a phone, after save button is clicked, update adapter
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == HOMEWORK_REQUEST) {
@@ -191,8 +197,7 @@ public class HomeworkListActivity extends FragmentActivity
                     .commit();
 
         } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
+            //start activityForResult so we can do something after detailActivity closes
             Intent detailIntent = new Intent(this, HomeworkDetailActivity.class);
             detailIntent.putExtra(HomeworkDetailFragment.ARG_ITEM_ID, id);
             startActivityForResult(detailIntent, HOMEWORK_REQUEST);
@@ -200,6 +205,7 @@ public class HomeworkListActivity extends FragmentActivity
     }
 
 
+    //saved data before app closes
     @Override
     protected void onStop() {
         super.onStop();
@@ -207,6 +213,8 @@ public class HomeworkListActivity extends FragmentActivity
         try {
             FileOutputStream fos = openFileOutput(SAVED_HOMEWORKS, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
+            //save homeworks and make savedBefore true
+            oos.writeBoolean(true);
             oos.writeObject(HomeworkContent.HOMEWORKS);
             oos.close();
         } catch (FileNotFoundException e) {
@@ -216,7 +224,7 @@ public class HomeworkListActivity extends FragmentActivity
         }
     }
 
-
+    //calls notifyDataSetChanged for HomeworkListFragment's adapter
     public void updateAdapter() {
         mHLF.getAdapter().notifyDataSetChanged();
     }

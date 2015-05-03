@@ -75,6 +75,7 @@ public class HomeworkListFragment extends ListFragment {
 
     }
 
+    //function to get the homeworkadapter
     public HomeworkAdapter getAdapter() {
         return mHomeworkAdapter;
     }
