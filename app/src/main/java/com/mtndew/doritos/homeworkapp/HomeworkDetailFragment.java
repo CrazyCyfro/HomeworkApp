@@ -343,13 +343,11 @@ public class HomeworkDetailFragment extends Fragment {
         dueDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" is due!");
         dueDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
         dueDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*10);
-        Log.d("debug",String.valueOf(Integer.valueOf(mHomework.getmId())*10));
 
         Intent remindDateIntent = new Intent(getActivity(), AlarmReceiver.class);
         remindDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" reminder!");
         remindDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
         remindDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*100);
-        Log.d("debug",String.valueOf(Integer.valueOf(mHomework.getmId())*100));
 
         PendingIntent dueDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*10,dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         dueDateAlarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),dueDatePendingIntent);
