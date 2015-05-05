@@ -3,6 +3,7 @@ package com.mtndew.doritos.homeworkapp;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -297,11 +298,15 @@ public class HomeworkDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 HomeworkContent.HOMEWORKS.remove(mHomework);
-                                    if (mTwoPane != null) {
-                                        getFragmentManager().beginTransaction()
-                                                .remove(getFragmentManager()
-                                                        .findFragmentById(R.id.homework_detail_container)).commit();
-                                    }
+                                if (mTwoPane != null) {
+                                    getFragmentManager().beginTransaction()
+                                            .remove(getFragmentManager()
+                                                    .findFragmentById(R.id.homework_detail_container)).commit();
+                                }
+                                NotificationManager mNotificationManager =
+                                        (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*10);
+                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*100);
                                 updateHomeworkList();
                             }
                         })

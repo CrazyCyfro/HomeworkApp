@@ -2,6 +2,7 @@ package com.mtndew.doritos.homeworkapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -51,19 +52,24 @@ public class HomeworkListActivity extends FragmentActivity
     private Spinner mSortSpinner;
 
     private HomeworkListFragment mHLF;
+    private SharedPreferences mSharedPrefs = null;
 
     //check if any data has been saved before
-    private Boolean savedBefore = false;
+    private static final String FIRST_RUN = "first run";
 
     public static final int HOMEWORK_REQUEST = 1;
 
     public static final String SAVED_HOMEWORKS = "saved homeworks";
+    public static final String PREFERENCES_FILE = "preferences file";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_list);
+
+        //gets shared preferences to check if app is running for first time
+        mSharedPrefs = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 
         //finds homeworklistfragment
         mHLF = (HomeworkListFragment) getSupportFragmentManager()
@@ -72,17 +78,16 @@ public class HomeworkListActivity extends FragmentActivity
         try {
             FileInputStream fis = openFileInput(SAVED_HOMEWORKS);
             ObjectInputStream is = new ObjectInputStream(fis);
-            //savedBefore will be false if opening for the first time,
-            //true if saves have been added before
-            savedBefore = is.readBoolean();
 
+            //check if there have been any saves beforehand
+            if (mSharedPrefs.getBoolean(FIRST_RUN, true)) {
+                mSharedPrefs.edit().putBoolean(FIRST_RUN, false).apply();
 
-            //check if there have been any saves beforehand (
-            if (!savedBefore) {
                 //add data if it's the first time opening the app
                 HomeworkContent.addItem(new HomeworkContent.Homework("Homework 3", "CEP", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
                 HomeworkContent.addItem(new HomeworkContent.Homework("Topkek", "Memes", false, new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
                 HomeworkContent.addItem(new HomeworkContent.Homework("Ganja","Dank",false,new GregorianCalendar(), new GregorianCalendar(), "", 1, HomeworkContent.currentId.toString()));
+
             } else {
                 //load homeworks and add them to homeworkcontent
                 ArrayList<HomeworkContent.Homework> savedHomeworks = (ArrayList< HomeworkContent.Homework>)is.readObject();
@@ -214,7 +219,6 @@ public class HomeworkListActivity extends FragmentActivity
         }
     }
 
-
     //saved data before app closes
     @Override
     protected void onStop() {
@@ -223,8 +227,7 @@ public class HomeworkListActivity extends FragmentActivity
         try {
             FileOutputStream fos = openFileOutput(SAVED_HOMEWORKS, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            //save homeworks and make savedBefore true
-            oos.writeBoolean(true);
+            //save homeworks
             oos.writeObject(HomeworkContent.HOMEWORKS);
             oos.close();
         } catch (FileNotFoundException e) {
