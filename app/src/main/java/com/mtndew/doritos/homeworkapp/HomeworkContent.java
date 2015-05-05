@@ -12,7 +12,7 @@ public class HomeworkContent implements Serializable {
 
     public static List<Homework> HOMEWORKS = new ArrayList<>();
     public static Map<String, Homework> HOMEWORK_MAP = new HashMap<>();
-    public static Integer currentId = 0;
+    public static Integer currentId = 1;
 
     static {
     }

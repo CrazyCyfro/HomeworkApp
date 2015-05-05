@@ -21,18 +21,19 @@ public class AlarmReceiver extends BroadcastReceiver {
                         //get notif message from intent
                         .setContentText(intent.getStringExtra(HomeworkDetailFragment.NOTIF_MESSAGE));
         Intent resultIntent = new Intent(context, HomeworkListActivity.class);
+        resultIntent.putExtra(HomeworkDetailFragment.HOMEWORK_ID, intent.getStringExtra(HomeworkDetailFragment.HOMEWORK_ID));
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(HomeworkListActivity.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
-                        0,
+                        intent.getIntExtra(HomeworkDetailFragment.NOTIF_ID, 0),
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
         NotificationManager mNotificationManager =
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0,mBuilder.build());
+        mNotificationManager.notify(intent.getIntExtra(HomeworkDetailFragment.NOTIF_ID, 0),mBuilder.build());
     }
 }

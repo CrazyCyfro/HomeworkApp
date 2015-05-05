@@ -118,6 +118,12 @@ public class HomeworkListActivity extends FragmentActivity
             mHLF.setActivateOnItemClick(true);
         }
 
+        Intent intent = getIntent();
+        if (intent.getStringExtra(HomeworkDetailFragment.HOMEWORK_ID) != null) {
+            String intentId = intent.getStringExtra(HomeworkDetailFragment.HOMEWORK_ID);
+            openDetail(intentId);
+        }
+
         mAddHomeworkButton = (Button)this.findViewById(R.id.add_homework_button);
         mSortSpinner = (Spinner)this.findViewById(R.id.sort_spinner);
 
@@ -183,6 +189,10 @@ public class HomeworkListActivity extends FragmentActivity
      */
     @Override
     public void onItemSelected(String id) {
+        openDetail(id);
+    }
+
+    public void openDetail (String id) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a

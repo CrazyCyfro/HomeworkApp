@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,9 @@ public class HomeworkDetailFragment extends Fragment {
     public static final String IS_TWOPANE = "is two pane";
 
     public static final String NOTIF_MESSAGE = "notification message";
+    public static final String NOTIF_ID = "notification id";
+    public static final String HOMEWORK_ID = "homework id";
+
 
     private HomeworkContent.Homework mHomework;
 
@@ -62,8 +66,6 @@ public class HomeworkDetailFragment extends Fragment {
     private GregorianCalendar mTempRemindDate;
 
     private AlertDialog mAlertDialog;
-
-    private HomeworkListFragment mHLF;
 
     private Boolean mTwoPane;
     /**
@@ -295,11 +297,11 @@ public class HomeworkDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 HomeworkContent.HOMEWORKS.remove(mHomework);
-                                if (mTwoPane) {
-                                    getFragmentManager().beginTransaction()
-                                            .remove(getFragmentManager()
-                                                    .findFragmentById(R.id.homework_detail_container)).commit();
-                                }
+                                    if (mTwoPane != null) {
+                                        getFragmentManager().beginTransaction()
+                                                .remove(getFragmentManager()
+                                                        .findFragmentById(R.id.homework_detail_container)).commit();
+                                    }
                                 updateHomeworkList();
                             }
                         })
@@ -329,18 +331,26 @@ public class HomeworkDetailFragment extends Fragment {
     //sends the notification for both reminder and due date notifs
     public void remind() {
         //thanks Navneeth, you are a life saver
-        AlarmManager alarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager dueDateAlarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager remindDateAlarm = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
         Intent dueDateIntent = new Intent(getActivity(), AlarmReceiver.class);
         dueDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" is due!");
+        dueDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
+        dueDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*10);
+        Log.d("debug",String.valueOf(Integer.valueOf(mHomework.getmId())*10));
 
         Intent remindDateIntent = new Intent(getActivity(), AlarmReceiver.class);
         remindDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" reminder!");
+        remindDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
+        remindDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*100);
+        Log.d("debug",String.valueOf(Integer.valueOf(mHomework.getmId())*100));
 
+        PendingIntent dueDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*10,dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        dueDateAlarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),dueDatePendingIntent);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),pendingIntent);
-        pendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId()),remindDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        alarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),pendingIntent);
+        PendingIntent remindDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*100,remindDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        remindDateAlarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),remindDatePendingIntent);
 
     }
 
