@@ -305,8 +305,8 @@ public class HomeworkDetailFragment extends Fragment {
                                 }
                                 NotificationManager mNotificationManager =
                                         (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*10);
-                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*100);
+                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*479);
+                                mNotificationManager.cancel(Integer.valueOf(mHomework.getmId())*487);
                                 updateHomeworkList();
                             }
                         })
@@ -342,17 +342,17 @@ public class HomeworkDetailFragment extends Fragment {
         Intent dueDateIntent = new Intent(getActivity(), AlarmReceiver.class);
         dueDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" is due!");
         dueDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
-        dueDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*10);
+        dueDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*479);
 
         Intent remindDateIntent = new Intent(getActivity(), AlarmReceiver.class);
         remindDateIntent.putExtra(NOTIF_MESSAGE, mHomework.getmName()+" reminder!");
         remindDateIntent.putExtra(HOMEWORK_ID, mHomework.getmId());
-        remindDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*100);
+        remindDateIntent.putExtra(NOTIF_ID, Integer.valueOf(mHomework.getmId())*487);
 
-        PendingIntent dueDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*10,dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent dueDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*479,dueDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         dueDateAlarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmDueDate().getTimeInMillis(),dueDatePendingIntent);
 
-        PendingIntent remindDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*100,remindDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent remindDatePendingIntent = PendingIntent.getBroadcast(getActivity(),Integer.valueOf(mHomework.getmId())*487,remindDateIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         remindDateAlarm.set(AlarmManager.RTC_WAKEUP,mHomework.getmRemindDate().getTimeInMillis(),remindDatePendingIntent);
 
     }
